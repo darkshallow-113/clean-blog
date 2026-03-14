@@ -1,0 +1,620 @@
+/* 个人博客样式 */
+:root {
+  --bg: rgba(255, 255, 255, 0.88);
+  --text: #111;
+  --muted: rgba(0, 0, 0, 0.55);
+  --link: #1a73e8;
+  --card-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  --card-border: rgba(255, 255, 255, 0.35);
+  --header-bg: rgba(0, 0, 0, 0.55);
+  --accent: rgba(26, 115, 232, 0.75);
+  --tag-bg: rgba(26, 115, 232, 0.12);
+  --search-bg: rgba(255, 255, 255, 0.88);
+  --hero-bg: rgba(255, 255, 255, 0.14);
+  --hero-border: rgba(255, 255, 255, 0.18);
+  --serif: "Noto Serif SC", serif;
+}
+
+[data-theme="dark"] {
+  --bg: rgba(22, 22, 25, 0.78);
+  --text: #f3f4f6;
+  --muted: rgba(255, 255, 255, 0.7);
+  --link: #83c9ff;
+  --card-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+  --card-border: rgba(255, 255, 255, 0.16);
+  --header-bg: rgba(0, 0, 0, 0.55);
+  --accent: rgba(103, 198, 255, 0.75);
+  --tag-bg: rgba(103, 198, 255, 0.15);
+  --search-bg: rgba(18, 18, 21, 0.78);
+  --hero-bg: rgba(18, 18, 21, 0.40);
+  --hero-border: rgba(255, 255, 255, 0.18);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  color: var(--text);
+  transition: color 0.25s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* 背景幻灯片 */
+.bg-slideshow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.bg-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+
+.bg-slide.active {
+  opacity: 1;
+}
+
+.bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45));
+  z-index: 1;
+}
+
+#snowflakes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1em;
+  user-select: none;
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+.content {
+  font-family: var(--serif);
+}
+
+/* 内容区半透明背景，保留内外对比 */
+.content {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1.25rem;
+  background: var(--bg);
+  border-radius: 14px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.site-header {
+  padding: 1rem 1.25rem;
+  background: var(--header-bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  transition: background 0.25s ease, transform 0.3s ease;
+  animation: slideDown 0.6s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.site-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+nav a {
+  margin-left: 1rem;
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.content h1,
+.content h2,
+.content h3 {
+  margin-top: 1.75rem;
+}
+
+.content p {
+  margin: 1rem 0;
+}
+
+.post-meta {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.post-list li {
+  margin-bottom: 1rem;
+}
+
+.post-link {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.post-date {
+  color: #777;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
+.post-summary {
+  margin: 0.75rem 0 1rem;
+  color: var(--muted);
+  line-height: 1.55;
+  text-indent: 1.2em;
+}
+
+.post p {
+  text-indent: 1.2em;
+  margin: 1rem 0;
+}
+
+.post p:first-of-type {
+  text-indent: 0;
+}
+
+.post-footer {
+  margin-top: 2.2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.post-image {
+  margin: 1.25rem 0;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+}
+
+.post-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.post-image figcaption {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 0;
+}
+
+.post-card {
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.25s ease;
+  animation: fadeInScale 0.6s ease-out backwards;
+}
+
+.post-card:nth-child(1) { animation-delay: 0.1s; }
+.post-card:nth-child(2) { animation-delay: 0.2s; }
+.post-card:nth-child(3) { animation-delay: 0.3s; }
+.post-card:nth-child(4) { animation-delay: 0.4s; }
+.post-card:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.post-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+.post-card .post-link {
+  display: inline-block;
+  font-size: 1.15rem;
+  margin-bottom: 0.35rem;
+}
+
+.post-card .post-date {
+  display: block;
+  margin: 0.3rem 0 0.8rem;
+}
+
+.post-card .post-tags {
+  margin-top: 0.85rem;
+}
+
+.post-tags span {
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.2rem 0.55rem;
+  background: var(--tag-bg);
+  border-radius: 999px;
+}
+
+.hero {
+  padding: 2.25rem 1.25rem;
+  border-radius: 18px;
+  background: var(--hero-bg);
+  border: 1px solid var(--hero-border);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(12px);
+  margin-bottom: 1.75rem;
+  transition: background 0.25s ease, border 0.25s ease;
+}
+
+.poem-section {
+  position: relative;
+  padding: 3rem 1rem 2.5rem;
+  overflow: hidden;
+  border-radius: 22px;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.8) 50%, rgba(255, 255, 255, 0.9) 100%);
+  border: 1px solid rgba(173, 216, 230, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(14px);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.poem-section.scroll {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.85) 50%, rgba(255, 255, 255, 0.95) 100%);
+  border: 2px solid rgba(173, 216, 230, 0.4);
+  box-shadow: inset 0 0 20px rgba(173, 216, 230, 0.2), 0 16px 40px rgba(0, 0, 0, 0.18);
+}
+
+.poem-section.scroll::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+}
+
+.poem-section.scroll::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+}
+
+.poem-scroll {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.poem-content {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: inset 0 0 10px rgba(173, 216, 230, 0.1);
+}
+
+.poem-content h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #4682b4;
+  font-weight: 600;
+}
+
+.poem-text {
+  margin: 1rem 0;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  color: #2f4f4f;
+}
+
+.poem-text.chinese {
+  font-family: 'Noto Serif SC', serif;
+  text-align: center;
+}
+
+.poem-text.japanese {
+  font-family: 'Noto Serif JP', serif;
+  text-align: center;
+  direction: ltr;
+}
+
+.poem-text p {
+  margin: 0.5rem 0;
+}
+
+.poem-divider {
+  margin: 2rem auto;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #87ceeb, transparent);
+  border-radius: 1px;
+}
+
+.hero-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  margin: 0 0 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.05rem;
+}
+
+.search-box {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: var(--search-bg);
+  font-size: 1rem;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  transition: background 0.25s ease, border 0.25s ease;
+}
+
+.search-box input:focus {
+  border-color: rgba(26, 115, 232, 0.75);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.18);
+}
+
+.site-footer {
+  text-align: center;
+  padding: 1.25rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* 加载动画样式 - 增强健壮性 */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+  /* 确保即使JavaScript完全失败，加载屏幕也会在最大2秒后隐藏 */
+  animation: guaranteed-hide 0.5s ease-out 2s forwards;
+}
+
+/* 主内容默认可见，但被加载屏幕覆盖 */
+body > .content,
+body > header,
+body > footer {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* 保证隐藏的关键帧 - 即使JavaScript失败也会执行 */
+@keyframes guaranteed-hide {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  90% {
+    opacity: 0;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+    pointer-events: none;
+  }
+}
+
+/* 如果JavaScript成功，这个类会立即应用 */
+.loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  display: none;
+  pointer-events: none;
+  animation: none; /* 禁用CSS动画，让JavaScript立即控制 */
+}
+
+/* 确保页面内容在加载屏幕后可见 */
+body:not(.loading) .content {
+  opacity: 1 !important;
+}
+
+.screen-frame {
+  width: 90%;
+  max-width: 800px;
+  height: 70%;
+  max-height: 600px;
+  border: 8px solid #8B4513;
+  border-radius: 15px;
+  background: #2F1B14;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-content {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0.6), rgba(139, 69, 19, 0.3));
+  animation: scanlines 2s linear infinite;
+}
+
+.loading-text {
+  position: relative;
+  z-index: 2;
+  color: #FFD700;
+  font-size: 1.5rem;
+  font-family: var(--serif);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  animation: flicker 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes scanlines {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .screen-frame {
+    width: 95%;
+    height: 60%;
+  }
+
+  .loading-text {
+    font-size: 1.2rem;
+  }
+}
+

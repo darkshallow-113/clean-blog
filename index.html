@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人博客 - 重新部署</title>
+    <meta name="description" content="包含完整美术效果的个人博客">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="我的个人博客">
+    <meta property="og:description" content="包含背景轮播、雪花效果和卷轴样式的个人博客">
+    <meta property="og:image" content="/assets/392e64c36fb7df3badbe91f3b086a3de1029869770.jpg">
+    <meta property="og:type" content="website">
+    
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 样式 -->
+    <style>
+        :root {
+            --bg: rgba(255, 255, 255, 0.88);
+            --text: #111;
+            --muted: rgba(0, 0, 0, 0.55);
+            --link: #1a73e8;
+            --card-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+            --card-border: rgba(255, 255, 255, 0.35);
+            --header-bg: rgba(0, 0, 0, 0.55);
+            --accent: rgba(26, 115, 232, 0.75);
+            --tag-bg: rgba(26, 115, 232, 0.12);
+            --serif: "Noto Serif SC", serif;
+        }
+        
+        [data-theme="dark"] {
+            --bg: rgba(22, 22, 25, 0.78);
+            --text: #f3f4f6;
+            --muted: rgba(255, 255, 255, 0.7);
+            --link: #83c9ff;
+            --card-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+            --card-border: rgba(255, 255, 255, 0.16);
+            --accent: rgba(103, 198, 255, 0.75);
+            --tag-bg: rgba(103, 198, 255, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* 背景幻灯片 */
+        .bg-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+        
+        .bg-slide.active {
+            opacity: 1;
+        }
+        
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45));
+            z-index: -1;
+        }
+        
+        /* 雪花效果 */
+        #snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .snowflake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1em;
+            user-select: none;
+            animation: snowfall linear infinite;
+        }
+        
+        @keyframes snowfall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        /* 头部 */
+        .site-header {
+            padding: 1rem 1.25rem;
+            background: var(--header-bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .site-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        nav a {
+            margin-left: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+        
+        nav a:hover {
+            color: #fff;
+        }
+        
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
+        }
+        
+        /* 主要内容 - 卷轴样式 */
+        .content {
+            max-width: 720px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg);
+            border-radius: 14px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 卷轴装饰效果 */
+        .content::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid rgba(173, 216, 230, 0.3);
+            border-radius: 10px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* 诗歌/文章区域 - 特殊卷轴样式 */
+        .poem-section {
+            position: relative;
+            padding: 2rem;
+            margin: 2rem 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.8) 50%, rgba(255, 255, 255, 0.9) 100%);
+            border: 1px solid rgba(173, 216, 230, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+            backdrop-filter: blur(14px);
+        }
+        
+        .poem-section.scroll {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.85) 50%, rgba(255, 255, 255, 0.95) 100%);
+            border: 2px solid rgba(173, 216, 230, 0.4);
+            box-shadow: inset 0 0 20px rgba(173, 216, 230, 0.2), 0 16px 40px rgba(0, 0, 0, 0.18);
+        }
+        
+        .poem-section h2 {
+            text-align: center;
+            color: #4682b4;
+            margin-bottom: 1.5rem;
+            font-family: var(--serif);
+        }
+        
+        .poem-text {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #2f4f4f;
+            text-align: center;
+            font-family: var(--serif);
+        }
+        
+        /* 文章卡片 */
+        .post-card {
+            background: var(--bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--card-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .post-card h3 {
+            color: var(--link);
+            margin-bottom: 0.5rem;
+        }
+        
+        .post-date {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* 页脚 */
+        .site-footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-top: 2rem;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .content {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .site-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            nav a {
+                margin: 0 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景幻灯片 -->
+    <div class="bg-slideshow">
+        <div class="bg-slide active" style="background-image: url('assets/392e64c36fb7df3badbe91f3b086a3de1029869770.jpg')"></div>
+        <div class="bg-slide" style="background-image: url('assets/dfa00fa664406543c391739528c8ad321029869770.jpg')"></div>
+        <div class="bg-slide" style="background-image: url('assets/16e3b26444d9e63da521deb14c27ba1b1029869770.jpg@478w_270h_1s.avif')"></div>
+        <div class="bg-slide" style="background-image: url('assets/771a00678977232dd367b946d41ae6241986114336.jpg@270w_360h_1s.avif')"></div>
+        <div class="bg-slide" style="background-image: url('assets/7281b09146ada2270224cf2d662236611029869770.jpg@270w_360h_1s.webp')"></div>
+        <div class="bg-slide" style="background-image: url('assets/305335e0481c2e5fdfc8ba16a77612ed1986114336.jpg@270w_360h_1s.avif')"></div>
+        <div class="bg-overlay"></div>
+    </div>
+    
+    <!-- 雪花效果容器 -->
+    <div id="snowflakes"></div>
+    
+    <!-- 网站头部 -->
+    <header class="site-header">
+        <a href="/" class="site-title">我的个人博客</a>
+        <nav>
+            <a href="/">首页</a>
+            <a href="#articles">文章</a>
+            <a href="#about">关于</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="切换亮/暗模式">🌙</button>
+    </header>
+    
+    <!-- 主要内容 -->
+    <main class="content">
+        <h1>欢迎来到我的博客</h1>
+        <p>这是一个重新部署的版本，包含所有美术效果：</p>
+        
+        <!-- 诗歌/卷轴样式区域 -->
+        <section class="poem-section scroll">
+            <h2>卷轴样式展示</h2>
+            <div class="poem-text">
+                <p>此区域展示了卷轴样式效果</p>
+                <p>背景有渐变和边框装饰</p>
+                <p>适合展示诗歌或重要内容</p>
+            </div>
+        </section>
+        
+        <section id="articles">
+            <h2>最新文章</h2>
+            
+            <article class="post-card">
+                <h3>欢迎来到我的博客</h3>
+                <p class="post-date">2026年3月14日</p>
+                <p>这是重新部署后的第一篇测试文章。所有美术效果都已恢复：背景轮播、雪花动画、卷轴样式和主题切换。</p>
+            </article>
+            
+            <article class="post-card">
+                <h3>GitHub Pages部署指南</h3>
+                <p class="post-date">2026年3月13日</p>
+                <p>学习如何将静态网站部署到GitHub Pages，并解决常见问题如空白页面、资源加载失败等。</p>
+            </article>
+            
+            <article class="post-card">
+                <h3>前端美术效果实现</h3>
+                <p class="post-date">2026年3月12日</p>
+                <p>探讨如何实现背景轮播、雪花动画、卷轴样式等前端美术效果，提升网站视觉体验。</p>
+            </article>
+        </section>
+        
+        <section id="about" style="margin-top: 3rem;">
+            <h2>关于本站</h2>
+            <p>这是一个使用纯HTML/CSS/JavaScript构建的静态博客，部署在GitHub Pages上。</p>
+            <p>特色功能：</p>
+            <ul>
+                <li>6张背景图片自动轮播</li>
+                <li>雪花飘落动画效果</li>
+                <li>卷轴样式内容区域</li>
+                <li>亮/暗主题切换</li>
+                <li>响应式设计</li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer class="site-footer">
+        <p>© 2026 我的个人博客 • 使用GitHub Pages部署 • 所有美术效果已恢复</p>
+    </footer>
+    
+    <script>
+        // 主题切换
+        const themeToggle = document.getElementById('theme-toggle');
+        const setTheme = (mode) => {
+            document.documentElement.dataset.theme = mode;
+            themeToggle.textContent = mode === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', mode);
+        };
+        
+        // 获取保存的主题或系统偏好
+        const savedTheme = localStorage.getItem('theme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        setTheme(savedTheme || preferred);
+        
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.dataset.theme;
+            const next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        });
+        
+        // 雪花效果
+        function createSnowflakes() {
+            const container = document.getElementById('snowflakes');
+            const snowflakeCount = window.innerWidth < 768 ? 20 : 35;
+            
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.className = 'snowflake';
+                snowflake.textContent = '❄';
+                snowflake.setAttribute('aria-hidden', 'true');
+                
+                // 随机大小
+                const size = Math.random() * 1.5 + 0.5;
+                snowflake.style.fontSize = `${size}em`;
+                
+                // 随机位置
+                snowflake.style.left = `${Math.random() * 100}%`;
+                
+                // 随机动画持续时间
+                const duration = Math.random() * 10 + 10;
+                snowflake.style.animationDuration = `${duration}s`;
+                
+                // 随机延迟
+                const delay = Math.random() * 5;
+                snowflake.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(snowflake);
+            }
+        }
+        
+        // 背景轮播
+        function initSlideshow() {
+            const slides = document.querySelectorAll('.bg-slide');
+            if (slides.length <= 1) return;
+            
+            let current = 0;
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            createSnowflakes();
+            initSlideshow();
+        });
+    </script>
+</body>
+</html>
